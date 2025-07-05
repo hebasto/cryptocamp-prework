@@ -58,6 +58,21 @@ struct Point {
         return lhs;
     }
 
+    // Essentially the same algorithm as used in `Coordinate::pow()`.
+    constexpr Point scalar_mul(Scalar s) const
+    {
+        Point result{ZERO};
+        auto doubled = *this;
+        while (s) {
+            if (s & 1) {
+                result += doubled;
+            }
+            doubled += doubled;
+            s >>= 1;
+        }
+        return result;
+    }
+
     auto operator<=>(const Point&) const = default;
 };
 
@@ -72,13 +87,17 @@ std::ostream& operator<<(std::ostream& os, const Point& p)
 
 int main()
 {
-    struct TestCase {
+    {
+    std::cout << "\nTesting secp256k1 point addition...";
+
+    struct PointAddTestCase {
         std::string a_x, a_y;     // Coordinates of point A.
         std::string b_x, b_y;     // Coordinates of point B.
         std::string sum_x, sum_y; // Coordinates of point (A + B).
     };
 
-    const std::vector<TestCase> test_vectors{
+    // https://cryptocamp.website/t/secp256k1-part-2-the-secp256k1-group/66#p-143-exercises-11
+    const std::vector<PointAddTestCase> point_add_test_vectors{
         {
             "67021774492365321256634043516869791044054964063002935266026048760627130221114", "22817883221438079958217963063610327523693969913024717835557258242342029550595",
             "61124938217888369397608518626468079588341162087856379517664485009963441753645", "5723382937169086635766392599511664586625983027860520036338464885987365575658",
@@ -107,7 +126,7 @@ int main()
     };
 
     int i = 1;
-    for (const auto& [a_x, a_y, b_x, b_y, sum_x, sum_y] : test_vectors) {
+    for (const auto& [a_x, a_y, b_x, b_y, sum_x, sum_y] : point_add_test_vectors) {
         std::cout << '\n';
 
         const secp256k1::Point a{a_x, a_y};
@@ -125,6 +144,55 @@ int main()
     }
 
     std::cout << '\n';
+    }
+
+    {
+    std::cout << "\nTesting secp256k1 scalar multiplication...";
+
+    struct ScalarMulTestCase {
+        std::string s;              // Scalar s.
+        std::string a_x, a_y;       // Coordinates of point A.
+        std::string prod_x, prod_y; // Coordinates of point s·A.
+    };
+
+    // https://cryptocamp.website/t/secp256k1-part-2-the-secp256k1-group/66#p-143-exercises-11
+    const std::vector<ScalarMulTestCase> scalar_mul_test_vectors{
+        {
+            "23529072936145521956642440150769408702836782170707519110832596096096916532363",
+            "94777218176490725267733209794395406270863807953747235979017564313980479098344", "53121120406880321033414824968851949358991212541220678285657788880408683486672",
+            "81492582484984365721511233996054540050314813088236204730182464710703690737195", "84165397430175583340352582740254662715932722835371860159802475562062898918484"
+        },
+        {
+            "77770687059601253501098075906318324640585620643934538062621691587089455400301",
+            "5187380010089560191829928600869675928625207216422014112981972591844926771008",  "75026050083095897004323393777174635055491620440662638678606562665317466685019",
+            "76999255841974189685876230118581110410155956505185745130247574937430232984638", "87571171775685157828750403037960903210473289232782306139148947195874900187006"
+        },
+        {
+            "3747619523960563074315083315669137577217731866086110333821423552891044218266",
+            "66371586610273545144505648512343824229224003523952192165787799288317344396675",  "6489011411151914877089190610663845093649879070897583530615192453262848111419",
+            "109441138145498884726545575659592733193661671281368885246963601136369148387669", "83708880322787879701338478937074052809697986569225329829504559758598509123336"
+        },
+    };
+
+    int i = 1;
+    for (const auto& [s, a_x, a_y, prod_x, prod_y] : scalar_mul_test_vectors) {
+        std::cout << '\n';
+
+        const secp256k1::Scalar v{s};
+        const secp256k1::Point a{a_x, a_y};
+        const auto prod = a.scalar_mul(v);
+        const secp256k1::Point expected = secp256k1::Point{prod_x, prod_y};
+        std::cout << "Test vector " << i++ << ":\n";
+        std::cout << "Scalar v           = " << v << '\n';
+        std::cout << "Point A            = " << a << '\n';
+        std::cout << "v·A (calculated)   = " << prod << '\n';
+        std::cout << "v·A (expected)     = " << expected << '\n';
+
+        assert(prod == expected);
+    }
+
+    std::cout << '\n';
+    }
 
     return 0;
 }
