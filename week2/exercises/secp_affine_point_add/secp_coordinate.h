@@ -5,7 +5,6 @@
 
 #include <cassert>
 #include <iostream>
-#include <limits>
 #include <string_view>
 #include <vector>
 
@@ -69,24 +68,17 @@ public:
 
     constexpr Coordinate pow(const Coordinate& exponent) const
     {
-        std::vector<Coordinate> squares;
-        squares.reserve(std::numeric_limits<raw_uint>::digits);
+        Coordinate result{1};
         auto current_square = *this;
         auto exp = exponent.m_value;
         while (exp) {
             auto next_square = current_square * current_square;
             if (exp & 1) {
-                squares.push_back(current_square);
+                result *= current_square;
             }
             exp >>= 1;
             current_square = next_square;
         }
-
-        Coordinate result{1};
-        for (auto s : squares) {
-            result *= s;
-        }
-
         return result;
     }
 
