@@ -22,10 +22,10 @@ struct Point {
     constexpr Point(std::string_view x_, std::string_view y_) : x(x_), y(y_) {}
 
     // Implements affine point addition.
-    constexpr Point operator+(const Point& rhs) const
+    constexpr Point operator+=(const Point& rhs)
     {
         // Case A: `this` is the identity.
-        if (*this == ZERO) return rhs;
+        if (*this == ZERO) return *this = rhs;
 
         // Case B: `rhs` is the identity.
         if (rhs == ZERO) return *this;
@@ -33,7 +33,7 @@ struct Point {
         // Case C: Addends are mutual inverses.
         if (x == rhs.x && y != rhs.y) {
             assert(y + rhs.y == Coordinate{0});
-            return ZERO;
+            return *this = ZERO;
         }
 
         Coordinate lambda;
@@ -47,9 +47,15 @@ struct Point {
             lambda = Coordinate{3} * x * x / (Coordinate{2} * y);
         }
 
-        auto result_x = lambda * lambda - x - rhs.x;
-        auto result_y = lambda * (x - result_x) - y;
-        return {result_x, result_y};
+        y = lambda * (Coordinate{2} * x + rhs.x - lambda * lambda) - y;
+        x = lambda * lambda - x - rhs.x;
+        return *this;
+    }
+
+    friend Point operator+(Point lhs, const Point& rhs)
+    {
+        lhs += rhs;
+        return lhs;
     }
 
     auto operator<=>(const Point&) const = default;
