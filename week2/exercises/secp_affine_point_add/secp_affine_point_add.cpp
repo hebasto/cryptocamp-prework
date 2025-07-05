@@ -105,7 +105,12 @@ int main()
     Point p{Coordinate{0} - Coordinate{6}.pow((Coordinate::modulus + 2) / 9), Coordinate{1}};
     std::cout << "p            = " << p << '\n';
 
+    Scalar lambda{"0x5363ad4cc05c30e0a5261c028812645a122e22ea20816678df02967c1b23bd72"};
+    std::cout << "lambda       = " << lambda << '\n';
+    // std::cout << "lambda ^ 3   = " << lambda.pow(3) << '\n';
+    // std::cout << "p            = " << p << '\n';
 
+    // Point rhs = p.scalar_mul(Scalar(5))
 
     return 0;
 }
