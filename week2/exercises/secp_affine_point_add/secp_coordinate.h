@@ -26,8 +26,8 @@ public:
     static constexpr raw_uint modulus = 0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f_cppui256;
 
     Coordinate() = default;
-    constexpr explicit Coordinate(const raw_uint& v) : m_value(v) { assert(v < modulus); }
-    constexpr explicit Coordinate(raw_uint&& v) : m_value(v) { assert(v < modulus); }
+    constexpr explicit Coordinate(const raw_uint& v) : m_value(v % modulus) { assert(v <= modulus); }
+    constexpr explicit Coordinate(raw_uint&& v) : m_value(v % modulus) { assert(v <= modulus); }
     constexpr explicit Coordinate(uint64_t v) : m_value(v) {}
     constexpr explicit Coordinate(std::string_view value) : m_value(value) {}
 

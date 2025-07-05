@@ -117,7 +117,7 @@ int main()
     Coordinate beta{"0x7ae96a2b657c07106e64479eac3434e99cf0497512f58995c1396c28719501ee"};
     std::cout << "beta         = " << beta << '\n';
 
-    Point p1{beta * (Coordinate{0} - Coordinate{6}.pow((Coordinate::modulus + 2) / 9)), Coordinate{0} - Coordinate{1}};
+    Point p1{beta * (Coordinate{Coordinate::modulus} - Coordinate{6}.pow((Coordinate::modulus + 2) / 9)), Coordinate{Coordinate::modulus} - Coordinate{1}};
     std::cout << "p1           = " << p1 << '\n';
 
     Point rhs = Point::GENERATOR.scalar_mul(Scalar(5)) + p1;
