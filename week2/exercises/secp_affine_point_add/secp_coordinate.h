@@ -13,6 +13,9 @@ namespace secp256k1 {
 namespace bmp = boost::multiprecision;
 using namespace bmp::literals;
 
+// The scalar type.
+using Scalar = bmp::uint256_t;
+
 class Coordinate {
 public:
     using raw_uint = bmp::uint256_t;
@@ -66,17 +69,16 @@ public:
         return lhs;
     }
 
-    constexpr Coordinate pow(const Coordinate& exponent) const
+    constexpr Coordinate pow(Scalar exponent) const
     {
         Coordinate result{1};
         auto current_square = *this;
-        auto exp = exponent.m_value;
-        while (exp) {
+        while (exponent) {
             auto next_square = current_square * current_square;
-            if (exp & 1) {
+            if (exponent & 1) {
                 result *= current_square;
             }
-            exp >>= 1;
+            exponent >>= 1;
             current_square = next_square;
         }
         return result;
@@ -86,7 +88,7 @@ public:
     {
         // Using Fermat's little theorem.
         // TODO: Reimplement using extended Euclidean algorithm.
-        *this *= rhs.pow(Coordinate{modulus - 2});
+        *this *= rhs.pow(modulus - 2);
         return *this;
     }
 
