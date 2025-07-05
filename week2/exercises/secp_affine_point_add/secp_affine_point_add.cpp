@@ -92,5 +92,12 @@ std::ostream& operator<<(std::ostream& os, const Point& p)
 
 int main()
 {
+    using namespace secp256k1;
+
+    Point p{Coordinate{0} - Coordinate{6}.pow((Coordinate::modulus + 2) / 9), Coordinate{1}};
+    std::cout << "p            = " << p << '\n';
+
+
+
     return 0;
 }
