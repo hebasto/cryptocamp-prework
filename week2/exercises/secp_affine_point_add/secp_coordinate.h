@@ -72,14 +72,13 @@ public:
     constexpr Coordinate pow(Scalar exponent) const
     {
         Coordinate result{1};
-        auto current_square = *this;
+        auto squared = *this;
         while (exponent) {
-            auto next_square = current_square * current_square;
             if (exponent & 1) {
-                result *= current_square;
+                result *= squared;
             }
             exponent >>= 1;
-            current_square = next_square;
+            squared *= squared;
         }
         return result;
     }
