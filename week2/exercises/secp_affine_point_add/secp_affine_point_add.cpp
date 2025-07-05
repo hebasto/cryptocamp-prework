@@ -18,8 +18,13 @@ struct Point {
     static const Point ZERO;
 
     constexpr Point() : Point(ZERO) {}
-    constexpr Point(Coordinate x_, Coordinate y_) : x(x_), y(y_) {}
-    constexpr Point(std::string_view x_, std::string_view y_) : x(x_), y(y_) {}
+    constexpr Point(Coordinate x_, Coordinate y_)
+        : x(x_), y(y_)
+    {
+        assert(y * y == x * x * x + Coordinate{7} || *this == ZERO);
+    }
+    constexpr Point(std::string_view x_, std::string_view y_)
+        : Point(Coordinate{x_}, Coordinate{y_}) {}
 
     // Implements affine point addition.
     constexpr Point operator+=(const Point& rhs)

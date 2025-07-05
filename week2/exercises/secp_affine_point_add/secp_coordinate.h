@@ -39,7 +39,7 @@ public:
         return *this;
     }
 
-    friend Coordinate operator+(Coordinate lhs, const Coordinate& rhs)
+    friend constexpr Coordinate operator+(Coordinate lhs, const Coordinate& rhs)
     {
         lhs += rhs;
         return lhs;
@@ -51,7 +51,7 @@ public:
         return *this;
     }
 
-    friend Coordinate operator-(Coordinate lhs, const Coordinate& rhs)
+    friend constexpr Coordinate operator-(Coordinate lhs, const Coordinate& rhs)
     {
         lhs -= rhs;
         return lhs;
@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    friend Coordinate operator*(Coordinate lhs, const Coordinate& rhs)
+    friend constexpr Coordinate operator*(Coordinate lhs, const Coordinate& rhs)
     {
         lhs *= rhs;
         return lhs;
@@ -91,7 +91,7 @@ public:
         return *this;
     }
 
-    friend Coordinate operator/(Coordinate lhs, const Coordinate& rhs)
+    friend constexpr Coordinate operator/(Coordinate lhs, const Coordinate& rhs)
     {
         lhs /= rhs;
         return lhs;
