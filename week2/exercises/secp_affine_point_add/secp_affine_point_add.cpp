@@ -17,6 +17,9 @@ struct Point {
     // The point at infinity.
     static const Point ZERO;
 
+    // The group generator.
+    static const Point GENERATOR;
+
     constexpr Point() : Point(ZERO) {}
     constexpr Point(Coordinate x_, Coordinate y_)
         : x(x_), y(y_)
@@ -81,7 +84,12 @@ struct Point {
     auto operator<=>(const Point&) const = default;
 };
 
-inline constexpr Point Point::ZERO{Coordinate{0}, Coordinate{0}};
+inline const Point Point::ZERO{"0", "0"};
+
+inline const Point Point::GENERATOR{
+    "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+    "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"
+};
 
 std::ostream& operator<<(std::ostream& os, const Point& p)
 {
