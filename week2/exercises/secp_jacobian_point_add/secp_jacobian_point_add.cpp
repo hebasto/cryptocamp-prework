@@ -43,9 +43,10 @@ struct Point {
 
     constexpr void TransformJacobianToAffine()
     {
-        auto zz = Z * Z;
-        x = X / zz;
-        y = Y / (zz * Z);
+        // Formulae are rewritten to use only a single inversion.
+        auto k = Coordinate{1} / (Z * Z * Z);
+        x = X * k * Z;
+        y = Y * k;
     }
 
     // Implements Jacobian point addition.
