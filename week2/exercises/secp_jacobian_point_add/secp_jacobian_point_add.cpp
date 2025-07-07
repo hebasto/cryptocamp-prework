@@ -8,7 +8,7 @@ namespace secp256k1 {
 
 // The secp256k1 curve group element type.
 // Represents secp256k1 curve points and the point 0 at infinity.
-struct Point {
+struct PointJ {
     // Affine coordinates.
     Coordinate x;
     Coordinate y;
@@ -19,24 +19,24 @@ struct Point {
     Coordinate Z;
 
     // The point at infinity.
-    static const Point ZERO;
+    static const PointJ ZERO;
 
     // The group generator.
-    static const Point GENERATOR;
+    static const PointJ GENERATOR;
 
-    constexpr Point() : Point(ZERO) {}
+    constexpr PointJ() : PointJ(ZERO) {}
 
     // Affine coordinate constructors.
-    constexpr Point(Coordinate ax, Coordinate ay)
+    constexpr PointJ(Coordinate ax, Coordinate ay)
         : x(ax), y(ay), X(ax), Y(ay), Z(1) {}
-    constexpr Point(std::string_view ax, std::string_view ay)
-        : Point(Coordinate{ax}, Coordinate{ay}) {}
+    constexpr PointJ(std::string_view ax, std::string_view ay)
+        : PointJ(Coordinate{ax}, Coordinate{ay}) {}
 
     // Jacobian coordinate constructors.
-    constexpr Point(Coordinate jx, Coordinate jy, Coordinate jz)
+    constexpr PointJ(Coordinate jx, Coordinate jy, Coordinate jz)
         : X(jx), Y(jy), Z(jz) {}
-    constexpr Point(std::string_view jx, std::string_view jy, std::string_view jz)
-        : Point(Coordinate{jx}, Coordinate{jy}, Coordinate{jz})
+    constexpr PointJ(std::string_view jx, std::string_view jy, std::string_view jz)
+        : PointJ(Coordinate{jx}, Coordinate{jy}, Coordinate{jz})
     {
         TransformJacobianToAffine();
     }
@@ -50,7 +50,7 @@ struct Point {
     }
 
     // Implements Jacobian point addition.
-    constexpr Point operator+=(const Point& rhs)
+    constexpr PointJ operator+=(const PointJ& rhs)
     {
         // Case A: `this` is the identity.
         if (*this == ZERO) return *this = rhs;
@@ -89,26 +89,26 @@ struct Point {
         return *this;
     }
 
-    friend constexpr Point operator+(Point lhs, const Point& rhs)
+    friend constexpr PointJ operator+(PointJ lhs, const PointJ& rhs)
     {
         lhs += rhs;
         return lhs;
     }
 
-    constexpr bool operator==(const Point& rhs) const
+    constexpr bool operator==(const PointJ& rhs) const
     {
         return x == rhs.x && y == rhs.y;
     }
 };
 
-inline const Point Point::ZERO{"0", "0"};
+inline const PointJ PointJ::ZERO{"0", "0"};
 
-inline const Point Point::GENERATOR{
+inline const PointJ PointJ::GENERATOR{
     "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
     "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"
 };
 
-std::ostream& operator<<(std::ostream& os, const Point& p)
+std::ostream& operator<<(std::ostream& os, const PointJ& p)
 {
     return os << "(" << p.x << ", " << p.y << ")";
 }
@@ -145,12 +145,12 @@ int main()
     for (const auto& [a_x, a_y, a_z, b_x, b_y, b_z, sum_x, sum_y] : test_vectors) {
         std::cout << '\n';
 
-        const secp256k1::Point a{a_x, a_y, a_z};
-        const secp256k1::Point b{b_x, b_y, b_z};
+        const secp256k1::PointJ a{a_x, a_y, a_z};
+        const secp256k1::PointJ b{b_x, b_y, b_z};
         auto sum = a + b;
         sum.TransformJacobianToAffine();
-        const secp256k1::Point expected = (sum_x == "0" && sum_y == "0") ? secp256k1::Point::ZERO
-                                                                         : secp256k1::Point{sum_x, sum_y};
+        const secp256k1::PointJ expected = (sum_x == "0" && sum_y == "0") ? secp256k1::PointJ::ZERO
+                                                                          : secp256k1::PointJ{sum_x, sum_y};
         std::cout << "Test vector " << i++ << ":\n";
         std::cout << "Point A            = " << a << '\n';
         std::cout << "Point B            = " << b << '\n';
